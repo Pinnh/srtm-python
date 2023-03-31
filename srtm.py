@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 import numpy as np
+import math
 
 SRTM_DICT = {'SRTM1': 3601, 'SRTM3': 1201}
 
@@ -30,8 +31,8 @@ def read_elevation_from_file(hgt_file, lat, lon):
             SAMPLES * SAMPLES  # length
         ).reshape((SAMPLES, SAMPLES))
 
-        lat_row = int(round((lat - int(lat)) * (SAMPLES - 1), 0))
-        lon_row = int(round((lon - int(lon)) * (SAMPLES - 1), 0))
+        lat_row = int(round((lat - int(math.floor(lat))) * (SAMPLES - 1), 0))
+        lon_row = int(round((lon - int(math.floor(lon))) * (SAMPLES - 1), 0))
 
         return elevations[SAMPLES - 1 - lat_row, lon_row].astype(int)
 
@@ -52,7 +53,7 @@ def get_file_name(lat, lon):
         ew = 'W'
 
     hgt_file = "%(ns)s%(lat)02d%(ew)s%(lon)03d.hgt" % \
-               {'lat': abs(lat), 'lon': abs(lon), 'ns': ns, 'ew': ew}
+               {'lat': abs(math.floor(lat)), 'lon': abs(math.floor(lon)), 'ns': ns, 'ew': ew}
     hgt_file_path = os.path.join(HGTDIR, hgt_file)
     if os.path.isfile(hgt_file_path):
         return hgt_file_path
@@ -65,3 +66,4 @@ if __name__ == '__main__':
     print('Mt. Everest: %d' % get_elevation(27.988056, 86.925278))
     # Kanchanjunga
     print('Kanchanjunga: %d' % get_elevation(27.7025, 88.146667))
+
